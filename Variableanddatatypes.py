@@ -13,3 +13,9 @@ print("Type of a is",type(b))
 
 lists=[8,2.3,[-4,5,["apple","grapes"]]]
 print(lists)
+
+tuple=({"apple","sparrow"},{"lion","tiger"})
+print(tuple)
+
+dictionary={"name":"sneha","age":20}
+print(dictionary)
