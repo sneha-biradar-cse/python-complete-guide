@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricultural Q&A System - India Data Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .query-section {
+            margin-bottom: 30px;
+        }
+
+        .query-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #queryInput {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        #queryInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .example-chip {
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .example-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .response-section {
+            display: none;
+        }
+
+        .response-section.active {
+            display: block;
+        }
+
+        .answer-box {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .answer-box h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .answer-content {
+            color: #555;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .citations {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .citations h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .citation-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .citation-item strong {
+            color: #667eea;
+        }
+
+        .citation-item a {
+            color: #764ba2;
+            text-decoration: none;
+        }
+
+        .citation-item a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-box {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c33;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .query-input-container {
+                flex-direction: column;
+            }
+
+            .main-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌾 Agricultural Q&A System</h1>
+            <p>Intelligent data integration from Ministry of Agriculture & IMD</p>
+        </div>
+
+        <div class="main-card">
+            <div class="query-section">
+                <h2 style="margin-bottom: 15px; color: #333;">Ask Your Question</h2>
+                <div class="query-input-container">
+                    <input 
+                        type="text" 
+                        id="queryInput" 
+                        placeholder="e.g., What is the rice production in Punjab?"
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button class="btn btn-primary" onclick="submitQuery()" id="submitBtn">
+                        Ask Question
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong style="color: #666;">Try these examples:</strong>
+                </div>
+                <div class="examples" id="examplesContainer">
+                    <div class="example-chip" onclick="setQuery('What is the rice production in Punjab?')">
+                        Rice production in Punjab
+                    </div>
+                    <div class="example-chip" onclick="setQuery('Show me wheat prices in 2024')">
+                        Wheat prices 2024
+                    </div>
+                    <div class="example-chip" onclick="setQuery('What is the weather like in Gujarat?')">
+                        Weather in Gujarat
+                    </div>
+                    <div class="example-chip" onclick="setQuery('Compare rice and wheat production')">
+                        Compare crops
+                    </div>
+                    <div class="example-chip" onclick="setQuery('What is the rainfall in West Bengal during monsoon?')">
+                        Monsoon rainfall
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingSection" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Processing your query...</p>
+            </div>
+
+            <div id="responseSection" class="response-section">
+                <div class="answer-box">
+                    <h3>📊 Answer</h3>
+                    <div class="answer-content" id="answerContent"></div>
+                </div>
+
+                <div class="citations">
+                    <h3>📚 Data Sources & Citations</h3>
+                    <div id="citationsContent"></div>
+                </div>
+            </div>
+
+            <div id="errorSection" style="display: none;">
+                <div class="error-box" id="errorContent"></div>
+            </div>
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>🎯 Accuracy & Traceability</h3>
+                <p>Every answer includes citations to the specific source datasets, ensuring transparency and verifiability.</p>
+            </div>
+            <div class="info-card">
+                <h3>🔒 Data Sovereignty</h3>
+                <p>Designed for secure, private deployment. All processing happens locally without external dependencies.</p>
+            </div>
+            <div class="info-card">
+                <h3>🔄 Multi-Source Integration</h3>
+                <p>Seamlessly combines data from Ministry of Agriculture and IMD despite different structures and formats.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitQuery();
+            }
+        }
+
+        function setQuery(query) {
+            document.getElementById('queryInput').value = query;
+            document.getElementById('queryInput').focus();
+        }
+
+        async function submitQuery() {
+            const queryInput = document.getElementById('queryInput');
+            const query = queryInput.value.trim();
+
+            if (!query) {
+                alert('Please enter a question');
+                return;
+            }
+
+            // Show loading, hide other sections
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('responseSection').classList.remove('active');
+            document.getElementById('errorSection').style.display = 'none';
+            document.getElementById('submitBtn').disabled = true;
+
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResponse(data);
+                } else {
+                    displayError(data.error || 'An error occurred');
+                }
+            } catch (error) {
+                displayError('Failed to connect to the server: ' + error.message);
+            } finally {
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        function displayResponse(data) {
+            // Display answer
+            const answerContent = document.getElementById('answerContent');
+            answerContent.innerHTML = formatMarkdown(data.answer);
+
+            // Display citations
+            const citationsContent = document.getElementById('citationsContent');
+            if (data.citations && data.citations.length > 0) {
+                citationsContent.innerHTML = data.citations.map((citation, index) => `
+                    <div class="citation-item">
+                        <strong>${index + 1}. ${citation.source}</strong><br>
+                        <small>
+                            URL: <a href="${citation.url}" target="_blank">${citation.url}</a><br>
+                            Last Updated: ${citation.last_updated}
+                        </small>
+                    </div>
+                `).join('');
+            } else {
+                citationsContent.innerHTML = '<p>No citations available</p>';
+            }
+
+            // Show response section
+            document.getElementById('responseSection').classList.add('active');
+        }
+
+        function displayError(errorMessage) {
+            const errorContent = document.getElementById('errorContent');
+            errorContent.textContent = errorMessage;
+            document.getElementById('errorSection').style.display = 'block';
+        }
+
+        function formatMarkdown(text) {
+            // Simple markdown formatting
+            return text
+                .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/\[(.+?)\]/g, '<span class="badge">$1</span>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // Load example queries on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                console.log('System status:', data);
+            } catch (error) {
+                console.error('Failed to check system health:', error);
+            }
+        });
+    </script>
+</body>
+</html>
