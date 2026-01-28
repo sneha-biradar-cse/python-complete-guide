@@ -1,4 +1,4 @@
-a="Dora!!!  doe"
+a="Dora!!!  doe!"
 print(len(a))
 print(a.upper())
 print(a.lower())

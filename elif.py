@@ -4,4 +4,6 @@ if (num < 0):
 elif (num == 0):
     print("number is zero.")
 else:
-    print("number is positive.")       
+    print("number is positive.")      
+
+print("I am happy now") 
