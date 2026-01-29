@@ -1,3 +1,4 @@
+#slicing
 names = "Nobita"
 print(len(names))
 len1=(len(names))
